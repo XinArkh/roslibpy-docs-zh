@@ -17,12 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'roslibpy-docs-zh'
-copyright = '2019, Wu Hsin'
-author = 'Wu Hsin'
-
-# The full version, including alpha/beta/rc tags
-release = '0.01'
+project = 'test'
+copyright = '2019, hsin'
+author = 'hsin'
 
 
 # -- General configuration ---------------------------------------------------
@@ -60,9 +57,3 @@ html_theme = 'alabaster'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
-
-## reload theme ##
-# import sphinx_rtd_theme
-# html_theme = "sphinx_rtd_theme"
-# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
