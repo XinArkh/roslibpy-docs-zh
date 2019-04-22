@@ -1,14 +1,18 @@
-.. roslibpy-docs-zh documentation master file, created by
-   sphinx-quickstart on Fri Apr 19 21:33:37 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+********************************
+roslibpy 中文文档
+********************************
 
-Welcome to roslibpy-docs-zh's documentation!
-============================================
+:作者: `Wu Hsin <https://muthukadan.net>`_
+:翻译: `someone <http://blog.plcent.com>`_
+:授权: 该文档遵循 `CC BY-SA 4.0 <http://creativecommons.org/licenses/by-sa/4.0/>`_ 许可协议。
+
+.. Note::
+   
+   这不是一个官方的文档.  官方的文档可以 `在此获得 <https://roslibpy.readthedocs.io/en/latest/>`_。
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: 目录:
    :numbered:
 
    introduction
@@ -20,7 +24,7 @@ Welcome to roslibpy-docs-zh's documentation!
 
 
 
-Indices and tables
+索引
 ==================
 
 * :ref:`genindex`
