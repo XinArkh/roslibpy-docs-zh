@@ -63,7 +63,7 @@
 * ``invoke test``: 用一个命令迅速运行所有的测试和检查；
 * ``invoke``: 显示可供调用的任务。
 
-更多的细节请参考 :ref:`contribution` 
+更多的细节请参考\ :ref:`contribution`\ 。
 
 
 发布项目
@@ -79,6 +79,7 @@
 
 * 所有的更改都要记录在 ``CHANGELOG.rst`` 中！
 * 准备好了吗？用下面的命令来发布新版本::
+
     invoke release [patch|minor|major]
 
 * Profit!
