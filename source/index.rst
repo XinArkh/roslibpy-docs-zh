@@ -2,7 +2,7 @@
 roslibpy 中文文档
 ********************************
 
-:作者: `Wu Hsin <https://github.com/XinArkh>`_
+:译者: `Wu Hsin <https://github.com/XinArkh>`_
 :授权: 该文档遵循 `CC BY-SA 4.0 <http://creativecommons.org/licenses/by-sa/4.0/>`_ 许可协议。
 
 .. Note::

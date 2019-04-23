@@ -20,10 +20,12 @@
 ~~~~
 
 使用 ``pip`` 命令安装 **roslibpy**::
-	pip install roslibpy
+
+    pip install roslibpy
 
 对于 IronPython 来说， ``pip`` 命令略有不同::
-	ipy -X:Frames -m pip install --user roslibpy
+
+    ipy -X:Frames -m pip install --user roslibpy
 
 .. Note::
 
