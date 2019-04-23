@@ -1,12 +1,12 @@
 简介
 ====
 
-**Python ROS Bridge library**，简称 roslibpy，提供了用 Python 或 IronPython 与开源机器人平台 `ROS <http://www.ros.org>`_ 相交互的一个途径。
+**Python ROS Bridge library**，简称 **roslibpy**，提供了用 Python 或 IronPython 与开源机器人平台 `ROS <http://www.ros.org>`_ 相交互的一个途径。
 该项目使用 WebSockets 与 `rosbridge 2.0 <http://wiki.ros.org/rosbridge_suite>`_ 建立连接，提供了 publishing、subscribing、service calls、actionlib、TF 等 ROS 中的基本功能。
 
-与 `rospy <http://wiki.ros.org/rospy>`_ 不同，该项目 **不需要在本地搭建 ROS 环境**，为 Linux 以外的平台使用 ROS 带来了方便。
+与 `rospy <http://wiki.ros.org/rospy>`_ 不同，该项目\ **不需要在本地搭建 ROS 环境**，为 Linux 以外的平台使用 ROS 带来了方便。
 
-roslibpy 的 API 构建参考了 `roslibjs <http://wiki.ros.org/roslibjs>`_ 的结构。
+**roslibpy** 的 API 构建参考了 `roslibjs <http://wiki.ros.org/roslibjs>`_ 的结构。
 
 
 主要特性
@@ -17,7 +17,7 @@ roslibpy 的 API 构建参考了 `roslibjs <http://wiki.ros.org/roslibjs>`_ 的�
 * ROS 参数管理 (get/set/delete)；
 * ROS API 服务；
 * Actionlib 支持；
-* 通过 ``tf2_web_republisher`` 实现 TF Client。
+* 通过 `tf2_web_republisher <http://wiki.ros.org/tf2_web_republisher>`_ 实现 TF Client。
 
 **Roslibpy** 可以在 Python 2.7、Python 3.x 和 IronPython 2.7 上运行。
 
@@ -29,33 +29,27 @@ roslibpy 的 API 构建参考了 `roslibjs <http://wiki.ros.org/roslibjs>`_ 的�
 
     pip install roslibpy
 
-对于 IronPython 来说， ``pip`` 命令略有不同::
+对于 IronPython 来说，\ ``pip`` 命令略有不同::
 
     ipy -X:Frames -m pip install --user roslibpy
-
-.. Note::
-
-   在连接的过程中需要保证你的网络中的 ROS 服务器配置并打开了 **rosbridge server** 和 **TF2 web republisher** 
 
 
 文档
 ~~~~
 
-完整版英文官方文档 `见此 <https://roslibpy.readthedocs.io/>`_。
+完整版英文官方文档\ `见此 <https://roslibpy.readthedocs.io/>`_。
 
-`本文档 <https://roslibpy.readthedocs.io/>`_ 为中文非官方文档。
+`本文档 <https://roslibpy.readthedocs.io/>`_\ 为中文非官方文档。
 
 
-贡献
+开发
 ~~~~
 
 确保您的本地环境配置正确：
 
 * 将仓库 `roslibpy <https://github.com/gramaziokohler/roslibpy>`_ 克隆到本地；
-* 创建一个虚拟环境
-* 安装开发依赖
-
-::
+* 创建一个虚拟环境；
+* 安装开发依赖::
 
     pip install -r requirements-dev.txt
 
@@ -69,11 +63,11 @@ roslibpy 的 API 构建参考了 `roslibjs <http://wiki.ros.org/roslibjs>`_ 的�
 * ``invoke test``: 用一个命令迅速运行所有的测试和检查；
 * ``invoke``: 显示可供调用的任务。
 
-更多的细节请参考 *开发者文档* 一节。
+更多的细节请参考 :ref:`contribution` 
 
 
 发布项目
-~~~~~~~
+~~~~~~~~
 
 准备好发布 **roslibpy** 的新版本了吗？接下来是发布新版本的步骤：
 
