@@ -1,11 +1,27 @@
 # roslibpy-docs-zh
 
-项目[roslibpy](https://github.com/gramaziokohler/roslibpy)的中文文档。
+项目[roslibpy](https://github.com/gramaziokohler/roslibpy)的**非官方**中文文档。
 
-目前的中文版文档页面可[在此处](https://roslibpy-docs-zh.readthedocs.io/zh/latest/)预览。
+完整版文档页面可[在此处](https://roslibpy-docs-zh.readthedocs.io/zh/latest/)浏览。
 
 roslibpy是一个连接Python与ROS环境的工具，安装roslibpy的主机无需再安装ROS环境便可以与ROS Master进行通信。
 
-鉴于roslibpy在中文互联网资料缺乏的现状，希望通过这篇文档的构建，将其介绍给更多中文用户。同时这是本人第一次尝试发布技术文档，进度可能比较慢，算给自己新开一个坑慢慢填。
+## 本地构建
 
-欢迎有兴趣的贡献者加入。
+Clone 该仓库到本地，然后进入项目根目录。
+
+按照`requirements.txt`的要求自行安装所需要的 Python 依赖库。
+
+### Linux
+
+```shell
+make html
+```
+
+### Windows
+
+```shell
+.\make.bat html
+```
+
+构建好的html文档位于`root/build/html`。
