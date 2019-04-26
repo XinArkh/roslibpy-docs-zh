@@ -3,13 +3,13 @@
 
 **roslibpy** 上手非常简单。在接下来的例子中你将看到如何使用它与一个 ROS 环境相连接。
 
-.. Note::
+.. note::
 
     在连接的过程中，确保在你网络中的 ROS 服务器配置并打开了 **rosbridge server** 和 **TF2 web republisher**\ （具体请戳 :ref:`ros-setup`\ ）
 
 这些例子假定了 ROS 服务器运行在同一台主机上。对于不在同一台主机的情况，只需要将\ ``host``\ 参数从\ ``'localhost'``\ 改为 ROS master 的 *IP 地址*\ 。
 
-.. Note::
+.. note::
 
     ``port``\ 参数必须设定为\ ``9090``\ ，因为\ ``rosbridge``\ 的默认端口号是\ ``9090``\ 。如果想改变端口号，可参考\ `这里 <https://github.com/gramaziokohler/roslibpy/issues/21#issuecomment-481685223>`_\ 。
 
@@ -69,7 +69,7 @@
 
 这个程序运行起来之后，会进入一个死循环，同时等待与 ROS 建立连接后打印输出。
 
-.. Note::
+.. note::
 
     **roslibpy.Ros.on_ready** 方法只是一次性地设定连接成功后的回调函数，并不会阻塞程序来等待连接。
 
@@ -86,7 +86,7 @@
 .. literalinclude:: files/ros-hello-world-run-forever.py
     :language: python
 
-.. Note::
+.. note::
 
     \ ``run()``\ 与\ ``run_forever()``\ 的区别在于，前者新开一个单独的线程来处理事件，而后者会阻塞当前线程。
 
@@ -133,7 +133,7 @@ ROS 中的\ ``Hello World``\ 例子是开启两个节点，并利用话题的订
 
     $ python ros-hello-world-listener.py
 
-.. Note::
+.. note::
 
     两个文件的位置不必在一起，它们可以在不同的路径、甚至不同的计算机中，只要保证是同一个 Ros master 即可。
 

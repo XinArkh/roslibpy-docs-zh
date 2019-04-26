@@ -1,7 +1,11 @@
 API 文档
 ========
 
-.. _ros-setup:
 
-ROS 配置
----------
+.. testsetup::
+
+    from roslibpy import *
+
+.. automodule:: roslibpy
+.. automodule:: roslibpy.actionlib
+.. automodule:: roslibpy.tf
