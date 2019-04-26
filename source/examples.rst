@@ -7,17 +7,17 @@
 
     在连接的过程中，确保在你网络中的 ROS 服务器配置并打开了 **rosbridge server** 和 **TF2 web republisher**\ （具体请戳 :ref:`ros-setup`\ ）
 
-这些例子假定了 ROS 服务器运行在同一台主机上。对于不在同一台主机的情况，只需要将 ``host`` 参数从 ``'localhost'`` 改为 ROS master 的 *IP 地址*\ 。
+这些例子假定了 ROS 服务器运行在同一台主机上。对于不在同一台主机的情况，只需要将\ ``host``\ 参数从\ ``'localhost'``\ 改为 ROS master 的 *IP 地址*\ 。
 
 .. Note::
 
-    ``port`` 参数必须设定为 ``9090``，因为 ``rosbridge`` 的默认端口号是 ``9090``。如果想改变端口号，可参考\ `这里 <https://github.com/gramaziokohler/roslibpy/issues/21#issuecomment-481685223>`_\ 。
+    ``port``\ 参数必须设定为\ ``9090``\ ，因为\ ``rosbridge``\ 的默认端口号是\ ``9090``\ 。如果想改变端口号，可参考\ `这里 <https://github.com/gramaziokohler/roslibpy/issues/21#issuecomment-481685223>`_\ 。
 
 
-首次连接
-~~~~~~~~
+第一个例子
+~~~~~~~~~~
 
-用以下命令导入 ``roslibpy``::
+用以下命令导入\ ``roslibpy``::
 
     >>> import roslibpy
 
@@ -28,14 +28,14 @@
 
 是不是很简单？
 
-上面的命令开启了一个非阻塞的连接，也就是说，连接是在后台建立的，但是函数不等连接建立成功就会马上返回。
+上面的命令开启了一个非阻塞的连接，也就是说，与 ROS 的连接是在后台建立的，但是函数不等连接建立成功就会马上返回。
 
 让我们检查一下连接状态::
 
     >>> ros.is_connected
     True
 
-**耶( •̀ ω •́ )y 这就是我们与 ROS 的首次连接！**
+**耶( •̀ ω •́ )y 这就是我们的第一个例子！**
 
 
 等待连接
@@ -56,6 +56,95 @@
 融会贯通
 ~~~~~~~~
 
-让我们将一个完整的例子以一个 Python 文件的形式建立。
+让我们以 Python 文件的形式建立一个完整的例子。
 
-新建一个文件并命名为 ``ros-hello-world.py``\ ，然后复制粘贴以下内容：
+新建一个文件并命名为\ ``ros-hello-world.py``\ ，然后复制粘贴以下内容：
+
+.. literalinclude:: files/ros-hello-world.py
+    :language: python
+
+在命令行中输入以下命令运行该程序::
+
+    $ python ros-hello-world.py
+
+这个程序运行起来之后，会进入一个死循环，同时等待与 ROS 建立连接后打印输出。
+
+.. Note::
+
+    **roslibpy.Ros.on_ready** 方法只是一次性地设定连接成功后的回调函数，并不会阻塞程序来等待连接。
+
+要中断程序并回到终端，按下\ ``Ctrl+C``\ 即可。
+
+
+控制事件循环
+~~~~~~~~~~~~
+
+在之前的例子里，我们通过调用\ ``run()``\ 来开启与 ROS 的连接，但是有时候我们想要\ ``roslibpy``\ 来操心主事件循环。在这种情况下，调用\ ``run_forever()``\ 更方便一点。
+
+接下来的代码片段用\ ``run_forever()``\ 实现了与之前的例子同样的功能：
+
+.. literalinclude:: files/ros-hello-world-run-forever.py
+    :language: python
+
+.. Note::
+
+    \ ``run()``\ 与\ ``run_forever()``\ 的区别在于，前者新开一个单独的线程来处理事件，而后者会阻塞当前线程。
+
+
+Hello World: 话题（Topics）
+~~~~~~~~~~~~~~~~~
+
+ROS 中的\ ``Hello World``\ 是开启两个节点，并利用话题的订阅/发布来建立通讯。这两个节点（一个 talker 和一个 listener）非常简单，但是透过它们可以便于理解在 ROS 框架下的分布式系统中，两个进程之间的通信是如何工作的。
+
+接下来，我们用 **roslibpy** 来建立一个简单的话题通讯。
+
+
+一个 talker 节点
+----------------
+
+接下来的例子是开启一个 ROS 节点并循环发布信息（按下\ ``Ctrl+C``\ 来关闭）。
+
+
+.. literalinclude:: files/ros-hello-world-talker.py
+    :language: python
+
+* :download:`ros-hello-world-talker.py <files/ros-hello-world-talker.py>`
+
+
+一个 listener 节点
+------------------
+
+现在让我们把视线移到 listener 端：
+
+.. literalinclude:: files/ros-hello-world-listener.py
+    :language: python
+
+* :download:`ros-hello-world-listener.py <files/ros-hello-world-listener.py>`
+
+
+跑起来
+------
+
+打开一个终端，开启 talker 节点::
+
+    $ python ros-hello-world-talker.py
+
+打开另一个终端，开启 listener 节点::
+
+    $ python ros-hello-world-listener.py
+
+.. Note::
+
+    两个文件的位置不必在一起，它们可以在不同的路径、甚至不同的计算机中，只要保证是同一个 Ros master。
+
+使用服务（Services）
+~~~~~~~~
+
+节点之间的另一种通讯方式是通过 ROS 服务来进行。
+
+服务需要定义请求和回应的类型，所以所以下面的例子使用了现成的\ ``get_loggers``\ 服务：
+
+.. literalinclude :: files/ros-service-caller.py
+    :language: python
+
+* :download:`ros-service-caller.py <files/ros-service-caller.py>`
