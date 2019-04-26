@@ -1,10 +1,13 @@
-********************************
+******************
 roslibpy 中文文档
-********************************
+******************
 
+
+:原文: `roslibpy: ROS Bridge library <https://roslibpy.readthedocs.io/en/latest/index.html>`_
 
 :译者: `Wu Hsin <https://github.com/XinArkh>`_
-:授权: 该文档遵循 `CC BY-SA 4.0 <http://creativecommons.org/licenses/by-sa/4.0/>`_ 许可协议。
+
+:授权: 该文档为\ **非官方**\ 中文文档，遵循 `CC BY-SA 4.0 <http://creativecommons.org/licenses/by-sa/4.0/>`_ 许可协议。
 
 .. Note::
    
