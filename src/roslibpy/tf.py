@@ -2,7 +2,7 @@ r"""
 TF
 ---
 
-ROS 提供了一个非常强大的转换库，叫做 `TF2 <http://wiki.ros.org/tf2>`_，
+ROS 提供了一个非常强大的转换库，叫做 `TF2 <http://wiki.ros.org/tf2>`_，\
 允许用户随时跟踪多个坐标系。
 
 **roslibpy** 库通过\ :class:`TFClient`\ 类与

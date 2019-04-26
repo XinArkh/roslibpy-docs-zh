@@ -46,8 +46,8 @@ ROS 主要概念
 话题
 ^^^^^
 
-ROS 是一个通信框架。 在 ROS 里面, 不同的 **节点** 通过 messages 与其它节点通信。
-**ROS messages** 在\ :class:`Message`\ 类中实现，
+ROS 是一个通信框架。 在 ROS 里面, 不同的 **节点** 通过 messages 与其它节点通信。\
+**ROS messages** 在\ :class:`Message`\ 类中实现，\
 并通过\ :class:`Topics <Topic>`\ 的\ **发布/订阅**\ 模型来传输。
 
 .. autoclass:: Message
@@ -71,7 +71,7 @@ ROS 是一个通信框架。 在 ROS 里面, 不同的 **节点** 通过 message
 参数服务器
 ^^^^^^^^^^
 
-ROS 提供了用于在不同节点之间分享数据的参数服务器。
+ROS 提供了用于在不同节点之间分享数据的参数服务器。\
 该服务通过\ :class:`Param`\ 类来实现。
 
 .. autoclass:: Param

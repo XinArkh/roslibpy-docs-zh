@@ -10,7 +10,7 @@
 代码贡献
 ---------
 
-我们欢迎任何人 pull request！
+我们欢迎任何人 pull request！\
 这里有一份改善代码的快速指南：
 
 1. Fork并 clone \ `这个仓库 <https://github.com/gramaziokohler/roslibpy>`_\ ；
@@ -46,7 +46,7 @@
 
 文档总是多多益善，无论是作为介绍/示例/使用文档的一部分，还是 docstrings 里面的 API 文档。
 
-文档使用 `reStructuredText <http://docutils.sourceforge.net/rst.html>`_ 撰写，
+文档使用 `reStructuredText <http://docutils.sourceforge.net/rst.html>`_ 撰写，\
 并用 `Sphinx <http://sphinx-doc.org/index.html>`_ 生成 HTML 格式的输出。
 
 在你更改本地文档之后，运行以下命令来重新生成它::
@@ -68,7 +68,7 @@
 Feature 的建议与反馈
 --------------------
 
-提供反馈最好的方式是新开一个 `GitHub issue <https://github.com/gramaziokohler/roslibpy/issues>`_。
+提供反馈最好的方式是新开一个 `GitHub issue <https://github.com/gramaziokohler/roslibpy/issues>`_。\
 如果你提出一个新的 feature，请：
     * 详细解释它的工作机理；
     * 使其涉及的范围尽可能小，以便实现。

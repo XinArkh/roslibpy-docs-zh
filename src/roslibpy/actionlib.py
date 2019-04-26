@@ -2,11 +2,11 @@ r"""
 Actionlib
 ----------
 
-另一个与 ROS 建立通讯的方法是通过 **actionlib** 栈。
+另一个与 ROS 建立通讯的方法是通过 **actionlib** 栈。\
 ROS 中的 Actions 允许执行可抢占任务，即可以被客户端中断的任务。
 
-Actions 通过\ :class:`ActionClient`\ 类来使用，它可以添加\ :class:`Goals <Goal>`\ 类。
-每个 goal 都可以发射出可侦听的事件，以便接收者对来自 Action 服务器的更新作出反应。
+Actions 通过\ :class:`ActionClient`\ 类来使用，它可以添加\ :class:`Goals <Goal>`\ 类。\
+每个 goal 都可以发射出可侦听的事件，以便接收者对来自 Action 服务器的更新作出反应。\
 可被发射的事件有四种：\ **status**\ ，\ **result**\ ，\ **feedback** 和 **timeout**\ 。
 
 .. autoclass:: ActionClient
