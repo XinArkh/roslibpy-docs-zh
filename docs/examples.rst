@@ -12,7 +12,8 @@
 
 .. note::
 
-    ``port``\ 参数必须设定为\ ``9090``\ ，因为\ ``rosbridge``\ 的默认端口号是\ ``9090``\ 。如果想改变端口号，可参考\ `这里 <https://github.com/gramaziokohler/roslibpy/issues/21#issuecomment-481685223>`_\ 。
+    ``port``\ 参数必须设定为\ ``9090``\ ，因为\ ``rosbridge``\ 的默认端口号是\ ``9090``\ 。如果想改变端口号，\
+    可参考\ `这里 <https://github.com/gramaziokohler/roslibpy/issues/21#issuecomment-481685223>`_\ 。
 
 
 第一个例子
@@ -95,7 +96,8 @@
 Hello World: 话题（Topics）
 ---------------------------
 
-ROS 中的\ ``Hello World``\ 例子是开启两个节点，并利用话题的订阅/发布来建立通讯。这两个节点（一个 talker 和一个 listener）非常简单，但是透过它们可以便于理解在 ROS 框架下的分布式系统中，两个进程之间的通信是如何工作的。
+ROS 中的\ ``Hello World``\ 例子是开启两个节点，并利用话题的订阅/发布来建立通讯。这两个节点（一个 talker 和一个 listener）非常简单，\
+但是透过它们可以便于理解在 ROS 框架下的分布式系统中，两个进程之间的通信是如何工作的。
 
 接下来，我们用 **roslibpy** 来建立一个简单的话题通讯。
 
@@ -110,6 +112,11 @@ ROS 中的\ ``Hello World``\ 例子是开启两个节点，并利用话题的订
     :language: python
 
 * :download:`ros-hello-world-talker.py <files/ros-hello-world-talker.py>`
+
+.. note::
+
+    这里以 ROS 中的 `std_msgs/String <http://docs.ros.org/api/std_msgs/html/msg/String.html>`_ 消息类型为例，其它消息类型\
+    也可以利用 Python 字典的方式构建，参考\ `这个例子 <https://github.com/gramaziokohler/roslibpy/issues/11#issuecomment-428178646>`_\ 。
 
 
 一个 listener 节点
