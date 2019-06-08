@@ -1,6 +1,6 @@
 .. _contribution:
 
-开发者指南
+贡献者指南
 ==========
 
 
@@ -70,5 +70,6 @@ Feature 的建议与反馈
 
 提供反馈最好的方式是新开一个 `GitHub issue <https://github.com/gramaziokohler/roslibpy/issues>`_。\
 如果你提出一个新的 feature，请：
-    * 详细解释它的工作机理；
-    * 使其涉及的范围尽可能小，以便实现。
+
+* 详细解释它的工作机理；
+* 使其涉及的范围尽可能小，以便实现。

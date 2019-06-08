@@ -7,7 +7,7 @@
 
 与 `rospy <http://wiki.ros.org/rospy>`_ 不同，该项目\ **不需要在本地搭建 ROS 环境**，为 Linux 以外的平台使用 ROS 带来了方便。
 
-**roslibpy** 的 API 构建参考了 `roslibjs <http://wiki.ros.org/roslibjs>`_ 的结构。
+**roslibpy** 的 API 构建参考了 `roslibjs`_ 的结构。
 
 
 主要特性
@@ -43,7 +43,7 @@
 `本文档 <https://roslibpy.readthedocs.io/>`_\ 为中文非官方文档。
 
 
-开发
+贡献
 ----
 
 确保您的本地环境配置正确：
@@ -84,3 +84,12 @@
     invoke release [patch|minor|major]
 
 * Profit!
+
+
+Credits
+-------
+
+本模块是基于 `roslibjs`_ 实现的，在很大程度上，它是到 Python 的逐行移植，只在其它惯用代码范式更有意义的地方才进行修改，\
+所以很大一部分功劳要归于 `roslibjs 的作者 <https://github.com/RobotWebTools/roslibjs/blob/develop/AUTHORS.md>`_\ 。
+
+.. _roslibjs: http://wiki.ros.org/roslibjs

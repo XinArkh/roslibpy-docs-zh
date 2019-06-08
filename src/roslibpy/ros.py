@@ -1,9 +1,14 @@
 from __future__ import print_function
 
 import logging
+import threading
 
-from . import Message, Service, ServiceRequest
+from . import Message
+from . import Service
+from . import ServiceRequest
 from .comm import RosBridgeClientFactory
+
+__all__ = ['Ros']
 
 LOGGER = logging.getLogger('roslibpy')
 
@@ -60,9 +65,19 @@ class Ros(object):
 
             self.factory.on_ready(_wrapper_callback)
 
-    def run(self):
-        """Kick-starts a non-blocking event loop."""
+    def run(self, timeout=None):
+        """Kick-starts a non-blocking event loop.
+
+        Args:
+            timeout: Timeout to wait until connection is ready.
+        """
         self.factory.manager.run()
+
+        wait_connect = threading.Event()
+        self.factory.on_ready(lambda _: wait_connect.set())
+
+        if not wait_connect.wait(timeout):
+            raise Exception('Failed to connect to ROS')
 
     def run_forever(self):
         """Kick-starts a blocking loop to wait for events.
@@ -73,8 +88,19 @@ class Ros(object):
         self.factory.manager.run_forever()
 
     def run_event_loop(self):
-        LOGGER.warn('Deprecation warning: use run_forever instead of run_event_loop ')
+        LOGGER.warn(
+            'Deprecation warning: use run_forever instead of run_event_loop ')
         self.run_forever()
+
+    def call_in_thread(self, callback):
+        """Call the given function in a thread.
+
+        The threading implementation is deferred to the factory.
+
+        Args:
+            callback (:obj:`callable`): Callable function to be invoked.
+        """
+        self.factory.manager.call_in_thread(callback)
 
     def call_later(self, delay, callback):
         """Call the given function after a certain period of time has passed.
@@ -107,7 +133,7 @@ class Ros(object):
         Args:
             event_name (:obj:`str`): Name of the event from which to unsubscribe.
             callback: Callable function. If ``None``, all callbacks of the event
-                will be removed.
+            will be removed.
         """
         if callback:
             self.factory.off(event_name, callback)
@@ -271,8 +297,6 @@ class Ros(object):
 
 
 if __name__ == '__main__':
-    import logging
-
     FORMAT = '%(asctime)-15s [%(levelname)s] %(message)s'
     logging.basicConfig(level=logging.DEBUG, format=FORMAT)
 

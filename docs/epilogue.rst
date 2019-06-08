@@ -14,19 +14,20 @@ Sphinx + reStructuredText + readthedocs 的各种挖坑与踩坑上，剩下的\
 水平，以后如果再写技术文档，相信会顺利很多。
 
 这种参与社区建设的感觉其实是非常令人愉悦的，我的工作虽然不大，但是将来\
-可能会帮助到无数的人，所以我认为是有意义的。最后，如果还有一点小小的\
-私心，那就是希望能够去 GitHub 给这个文档的仓库点一个 star 咯😋请把\
-你的鼓励砸过来吧~
+可能会帮助到无数的人，所以我认为是有意义的。最后，如果这个文档帮助到了你，\
+请去 `GitHub <https://github.com/XinArkh/roslibpy-docs-zh>`_ 给这个文档的\
+仓库点一个 star，作为对我的鼓励吧~
 
 
-**roslibpy** 官方仓库：\ `roslibpy <https://github.com/gramaziokohler/roslibpy>`_ 
+>> **roslibpy** 官方仓库：\ `roslibpy <https://github.com/gramaziokohler/roslibpy>`_ <<
 
-本文档仓库：\ `roslibpy-docs-zh <https://github.com/XinArkh/roslibpy-docs-zh>`_ 
-<<< ⭐ 求star哦 ⭐
+>> 本文档仓库：\ `roslibpy-docs-zh <https://github.com/XinArkh/roslibpy-docs-zh>`_ <<
 
 
 Wu Hsin
 
-2019.4.26
+2019.4.26.
 
-❤
+2019.6.8. edited.
+
+**Until the end of the world.**

@@ -4,7 +4,6 @@ TF
 
 ROS 提供了一个非常强大的转换库，叫做 `TF2 <http://wiki.ros.org/tf2>`_，\
 允许用户随时跟踪多个坐标系。
-
 **roslibpy** 库通过\ :class:`TFClient`\ 类与
 \ `tf2_web_republisher <http://wiki.ros.org/tf2_web_republisher>`_\ 
 连接来提供对它的访问。
@@ -18,7 +17,11 @@ from __future__ import print_function
 import logging
 import math
 
-from . import Service, ServiceRequest, Topic
+from . import Service
+from . import ServiceRequest
+from . import Topic
+
+__all__ = ['TFClient']
 
 LOGGER = logging.getLogger('roslibpy.tf')
 
@@ -97,14 +100,15 @@ class TFClient(object):
         self.republisher_update_requested = False
 
     def _process_error(self, response):
-        LOGGER.error('The TF republisher service interface returned an error. %s', str(response))
+        LOGGER.error(
+            'The TF republisher service interface returned an error. %s', str(response))
 
     def _process_response(self, response):
         """Process the service response and subscribe to the tf republisher topic."""
         LOGGER.info('Received response from TF Republisher service interface')
 
         if self.current_topic:
-            self.current_topic.unsubscribe(self._process_tf_array)
+            self.current_topic.unsubscribe()
 
         self.current_topic = Topic(
             self.ros, response['topic_name'], 'tf2_web_republisher/TFArray')
@@ -163,11 +167,10 @@ class TFClient(object):
     def dispose(self):
         """Unsubscribe and unadvertise all topics associated with this instance."""
         if self.current_topic:
-            self.current_topic.unsubscribe(self._process_tf_array)
+            self.current_topic.unsubscribe()
 
 
 if __name__ == '__main__':
-    import logging
     from roslibpy import Ros
 
     FORMAT = '%(asctime)-15s [%(levelname)s] %(message)s'

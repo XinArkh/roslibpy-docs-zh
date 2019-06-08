@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import json
 import logging
+import threading
 
 # Python 2/3 compatibility import list
 try:
@@ -10,6 +11,13 @@ except ImportError:
     from UserDict import UserDict
 
 LOGGER = logging.getLogger('roslibpy')
+
+__all__ = ['Message',
+           'ServiceRequest',
+           'ServiceResponse',
+           'Topic',
+           'Service',
+           'Param']
 
 
 class Message(UserDict):
@@ -219,16 +227,23 @@ class Service(object):
         """
         return self._is_advertised
 
-    def call(self, request, callback, errback):
+    def call(self, request, callback=None, errback=None, timeout=None):
         """Start a service call.
 
-        The service response is returned in the callback. If the
-        service is currently advertised, this call does nothing.
+        The service can be used either as blocking or non-blocking.
+        If the ``callback`` parameter is ``None``, then the call will
+        block until receiving a response. Otherwise, the service response
+        will be returned in the callback.
 
         Args:
             request (:class:`.ServiceRequest`): Service request.
             callback: Callback invoked on successful execution.
             errback: Callback invoked on error.
+            timeout: Timeout for the operation, in seconds. Only used if blocking.
+
+        Returns:
+            object: Service response if used as a blocking call, otherwise ``None``.
+
         """
         if self.is_advertised:
             return
@@ -236,18 +251,47 @@ class Service(object):
         service_call_id = 'call_service:%s:%d' % (
             self.name, self.ros.id_counter)
 
-        self.ros.send_service_request(Message({
+        message = Message({
             'op': 'call_service',
             'id': service_call_id,
             'service': self.name,
             'args': dict(request),
-        }), callback, errback)
+        })
+
+        # Non-blocking mode
+        if callback:
+            self.ros.send_service_request(message, callback, errback)
+            return
+
+        # Blocking mode
+        wait_event = threading.Event()
+        call_results = {}
+
+        def inner_callback(result):
+            call_results['result'] = result
+            wait_event.set()
+
+        def inner_errback(error):
+            call_results['exception'] = error
+            wait_event.set()
+
+        self.ros.send_service_request(message, inner_callback, inner_errback)
+
+        if not wait_event.wait(timeout):
+            raise Exception('No service response received')
+
+        if 'exception' in call_results:
+            raise Exception(call_results['exception'])
+
+        return call_results['result']
 
     def advertise(self, callback):
         """Start advertising the service.
 
         This turns the instance from a client into a server. The callback will be
         invoked with every request that is made to the service.
+
+        If the service is already advertised, this call does nothing.
 
         Args:
             callback: Callback invoked on every service call. It should accept two parameters: `service_request` and
@@ -373,7 +417,7 @@ if __name__ == '__main__':
 
         listener.subscribe(print_message)
 
-        ros_client.call_later(5, lambda: listener.unsubscribe(print_message))
+        ros_client.call_later(5, lambda: listener.unsubscribe())
         ros_client.call_later(10, lambda: listener.subscribe(print_message))
 
     def run_publisher_example():

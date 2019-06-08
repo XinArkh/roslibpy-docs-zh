@@ -2,8 +2,8 @@
 ========
 
 
-官方文档作者
-------------
+官方文档（英文）作者
+-------------------------
 
 * Gramazio Kohler Research `@gramaziokohler <https://github.com/gramaziokohler>`_
 * Gonzalo Casas <casas@arch.ethz.ch> `@gonzalocasas <https://github.com/gonzalocasas>`_

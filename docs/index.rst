@@ -20,7 +20,7 @@ roslibpy 中文文档
 
 **roslibpy** 的 API 构建参考了 `roslibjs <http://wiki.ros.org/roslibjs>`_ 的结构。
 
-截至 2019年4月26日，\ **roslibpy** 的版本更新至 0.4.1，亦为本中文文档所对应版本。
+截至 2019 年 6 月 8 日，\ **roslibpy** 的版本更新至 0.6.0，亦为本中文文档所对应版本。
 
 
 .. toctree::

@@ -21,7 +21,7 @@ make html
 ### Windows
 
 ```shell
-.\make.bat html
+./make.bat html
 ```
 
 构建好的html文档位于`root/build/html`。

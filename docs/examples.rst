@@ -30,29 +30,12 @@
 
 是不是很简单？
 
-上面的命令开启了一个非阻塞的连接，也就是说，与 ROS 的连接是在后台建立的，但是函数不等连接建立成功就会马上返回。
-
 让我们检查一下连接状态::
 
     >>> ros.is_connected
     True
 
-**耶( •̀ ω •́ )y 这就是我们的第一个例子！**
-
-
-等待连接
---------
-
-前面的例子能够成功，是因为我们是在终端敲代码输入命令，这对于建立一个连接所需要的时间来说\ **通常**\ 是足够慢的。但是，当代码以脚本的形式运行，处理速度会很快，我们希望确保一些代码只有在连接成功建立后才会执行。
-
-对于这种情况，我们需要使用\ :meth:`roslibpy.Ros.on_ready`\ 方法，这个方法会在连接成功建立后调用我们设定的一个函数或 lambda 表达式。
-
-在这里我们简单地打印输出是否成功连接的信息::
-
-    ros.on_ready(lambda: print('Is ROS connected?', ros.is_connected))
-
-
-在实际使用中你可以将这部分修改为任何 ROS 相关的操作，如话题的订阅或呼叫一个服务等。
+**耶( •̀ ω •́ )y 我们的第一个例子成功跑通！**
 
 
 融会贯通
@@ -69,21 +52,19 @@
 
     $ python ros-hello-world.py
 
-这个程序运行起来之后，会进入一个死循环，同时等待与 ROS 建立连接后打印输出。
-
-.. note::
-
-    \ :meth:`roslibpy.Ros.on_ready`\ 方法只是一次性地设定连接成功后的回调函数，并不会阻塞程序来等待连接。
-
-要中断程序并回到终端，按下\ ``Ctrl+C``\ 即可。
+这个程序运行起来之后，会尝试建立与 ROS 的连接，连接建立后打印输出信息，并终止连接。
 
 
 控制事件循环
 ------------
 
-在之前的例子里，我们通过调用\ ``run()``\ 来开启与 ROS 的连接，但是有时候我们想要\ ``roslibpy``\ 来操心主事件循环。在这种情况下，调用\ ``run_forever()``\ 更方便一点。
+在之前的例子里，我们通过调用\ ``run()``\ 来开启与 ROS 的连接，这样会在后台开启一个事件循环。在某些情况下，\
+我们希望在前台更明确地处理主事件循环，\ :class:`roslibpy.Ros` 提供了一个\ ``run_forever()``\ 方法来做这件事。
 
-接下来的代码片段用\ ``run_forever()``\ 实现了与之前的例子同样的功能：
+如果我们如果使用这个方法启动事件循环，则需要事先设置好所有连接处理配置。我们使用\ :meth:`roslibpy.Ros.on_ready`\ 来做这件事。
+
+
+接下来的代码片段用\ ``run_forever()``\ 和\ ``on_ready()``\ 实现了与之前的例子同样的功能：
 
 .. literalinclude:: files/ros-hello-world-run-forever.py
     :language: python
@@ -105,7 +86,7 @@ ROS 中的\ ``Hello World``\ 例子是开启两个节点，并利用话题的订
 一个 talker 节点
 ^^^^^^^^^^^^^^^^
 
-接下来的例子是开启一个 ROS 节点并循环发布信息（按下\ ``Ctrl+C``\ 来关闭）。
+接下来的例子是开启一个 ROS 节点并循环发布信息（按下\ ``Ctrl+C``\ 来终止）。
 
 
 .. literalinclude:: files/ros-hello-world-talker.py
@@ -122,7 +103,7 @@ ROS 中的\ ``Hello World``\ 例子是开启两个节点，并利用话题的订
 一个 listener 节点
 ^^^^^^^^^^^^^^^^^^
 
-现在让我们把视线移到 listener 端：
+Listener 端的代码如下：
 
 .. literalinclude:: files/ros-hello-world-listener.py
     :language: python
@@ -130,8 +111,8 @@ ROS 中的\ ``Hello World``\ 例子是开启两个节点，并利用话题的订
 * :download:`ros-hello-world-listener.py <files/ros-hello-world-listener.py>`
 
 
-跑起来
-^^^^^^
+运行例程
+^^^^^^^^^^^
 
 打开一个终端，开启 talker 节点::
 
@@ -150,9 +131,86 @@ ROS 中的\ ``Hello World``\ 例子是开启两个节点，并利用话题的订
 
 节点之间的另一种通讯方式是通过 ROS 服务来进行。
 
-服务需要定义请求和回应的类型，所以所以下面的例子使用了现成的\ ``get_loggers``\ 服务：
+服务一般需要定义请求和回应的类型，为了简单，下面的例子使用了现成的\ ``get_loggers``\ 服务：
 
-.. literalinclude :: files/ros-service-caller.py
+.. literalinclude :: files/ros-service-call-logger.py
     :language: python
 
-* :download:`ros-service-caller.py <files/ros-service-caller.py>`
+* :download:`ros-service-call-logger.py <files/ros-service-call-logger.py>`
+
+创建服务（Services）
+-----------
+
+只要服务类型的定义存在于您的 ROS 环境中，就可以创建新服务。
+
+下面的例子展示了如何创建一个简单的服务，它使用ROS 中定义的标准服务类型之一（``std_srvs/SetBool``）:
+
+.. literalinclude :: files/ros-service.py
+    :language: python
+
+* :download:`ros-service.py <files/ros-service.py>`
+
+下载该脚本，并输入如下命令::
+
+    $ python ros-service.py
+
+程序开始运行，期间服务会一直处于活动状态（按下\ ``Ctrl+C``\ 来终止）。
+
+不要关闭这个服务，下载并运行以下代码示例来调用服务，以验证服务是否正常工作:
+
+* :download:`ros-service-call-set-bool.py <files/ros-service-call-set-bool.py>`
+
+下载后在一个新的终端中键入以下命令::
+
+    $ python ros-service-call-set-bool.py
+
+.. note::
+
+    现在您已经掌握了 **roslibpy** 的基础知识，更多细节请查看 :ref:`ros-api-reference`\ 。
+
+Actions
+--------
+
+除了话题和服务之外，ROS还提供 **Actions**，它们被用于长时间运行的任务，比如导航，因为它们是非阻塞的，并且允许任务执行时被抢占和取消。
+
+**roslibpy** 既支持 action 客户端，也可以通过 :class:`roslibpy.actionlib.SimpleActionServer`\ 提供 action 服务器。
+
+下面的例子使用\ **斐波那契** action，该 action 的定义可在 `actionlib_tutorials <http://wiki.ros.org/actionlib_tutorials>`_ 中查看。
+
+Action 服务器
+^^^^^^^^^^^^^^^^
+
+让我们从斐波那契服务器的定义开始：
+
+.. literalinclude :: files/ros-action-server.py
+    :language: python
+
+* :download:`ros-action-server.py <files/ros-action-server.py>`
+
+下载后键入以下命令::
+
+    $ python ros-action-server.py
+
+在程序运行时，\ action 服务器将保持活动状态（按下\ ``Ctrl+C``\ 来终止）。
+
+如果您想在下一个示例中测试这个窗口，请不要关闭它。
+
+Action 客户端
+^^^^^^^^^^^^^^^^^
+
+现在，让我们看看如何为新创建的服务器编写一个 action 客户端。
+
+下面的程序显示了一个简单的 action 客户端：
+
+.. literalinclude :: files/ros-action-client.py
+    :language: python
+
+* :download:`ros-action-client.py <files/ros-action-client.py>`
+
+下载后键入以下命令::
+
+    $ python ros-action-client.py
+
+您将立即看到我们的 action 服务器的所有中间计算，并在最后一行显示生成的斐波那契数列。
+
+这个例子非常简单，使用了 :meth:`roslibpy.actionlib.Goal.wait` 函数，以使代码更易于阅读。一个更鲁棒的处理方法是使用回调把结果连接到 ``result`` 事件。

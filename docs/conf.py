@@ -22,7 +22,7 @@ copyright = u'2019, Wu Hsin'
 author = u'Wu Hsin'
 
 # The full version, including alpha/beta/rc tags
-release = '0.4.1'
+release = '0.6.0'
 
 
 # -- General configuration ---------------------------------------------------
