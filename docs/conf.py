@@ -14,7 +14,7 @@ import os
 import sys
 # sys.path.insert(0, os.path.abspath('../src'))
 # in readthedocs:
-sys.path.insert(0, './src')
+sys.path.insert(0, os.path.abspath('./src'))
 
 
 # -- Project information -----------------------------------------------------
