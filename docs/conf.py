@@ -12,9 +12,9 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../src'))
+# sys.path.insert(0, os.path.abspath('../src'))
 # in readthedocs:
-sys.path.insert(0, '/home/docs/checkouts/readthedocs.org/user_builds/roslibpy-docs-zh/src')
+sys.path.insert(0, './src')
 
 
 # -- Project information -----------------------------------------------------
