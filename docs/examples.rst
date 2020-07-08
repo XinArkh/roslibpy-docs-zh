@@ -296,11 +296,10 @@ ROS 提供了一系列 API 用来查询话题、服务、节点等。这些 API 
 
 下列是一些更复杂的使用 ``roslibpy`` 的例子。
 
-我们鼓励大家通过 pull request 或 issue tracker 来提交更多的例程。
-
 .. toctree::
     :maxdepth: 2
     :glob:
 
     examples/*
 
+我们鼓励大家通过 pull request 或 issue tracker 来提交更多的例程。
