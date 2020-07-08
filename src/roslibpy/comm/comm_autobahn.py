@@ -7,13 +7,14 @@ from autobahn.twisted.websocket import WebSocketClientFactory
 from autobahn.twisted.websocket import WebSocketClientProtocol
 from autobahn.twisted.websocket import connectWS
 from autobahn.websocket.util import create_url
+from twisted.internet import defer
 from twisted.internet import reactor
-from twisted.internet.error import ConnectionDone
+from twisted.internet import threads
 from twisted.internet.protocol import ReconnectingClientFactory
 from twisted.python import log
 
-from . import RosBridgeProtocol
 from ..event_emitter import EventEmitterMixin
+from . import RosBridgeProtocol
 
 LOGGER = logging.getLogger('roslibpy')
 
@@ -27,6 +28,7 @@ class AutobahnRosBridgeProtocol(RosBridgeProtocol, WebSocketClientProtocol):
 
     def onOpen(self):
         LOGGER.info('Connection to ROS MASTER ready.')
+        self._manual_disconnect = False
         self.factory.ready(self)
 
     def onMessage(self, payload, isBinary):
@@ -46,6 +48,7 @@ class AutobahnRosBridgeProtocol(RosBridgeProtocol, WebSocketClientProtocol):
         return self.sendMessage(payload, isBinary=False, fragmentSize=None, sync=False, doNotCompress=False)
 
     def send_close(self):
+        self._manual_disconnect = True
         self.sendClose()
 
 
@@ -80,6 +83,7 @@ class AutobahnRosBridgeClientFactory(EventEmitterMixin, ReconnectingClientFactor
             self.once('ready', callback)
 
     def ready(self, proto):
+        self.resetDelay()
         self._proto = proto
         self.emit('ready', proto)
 
@@ -90,10 +94,8 @@ class AutobahnRosBridgeClientFactory(EventEmitterMixin, ReconnectingClientFactor
         LOGGER.debug('Lost connection. Reason: %s', reason)
         self.emit('close', self._proto)
 
-        # Do not try to reconnect if the connection was closed cleanl
-        if reason.type is not ConnectionDone:
+        if not self._proto or (self._proto and not self._proto._manual_disconnect):
             ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
-
         self._proto = None
 
     def clientConnectionFailed(self, connector, reason):
@@ -115,6 +117,39 @@ class AutobahnRosBridgeClientFactory(EventEmitterMixin, ReconnectingClientFactor
         url = host if port is None else create_url(host, port, is_secure)
         return url
 
+    @classmethod
+    def set_max_delay(cls, max_delay):
+        """Set the maximum delay in seconds for reconnecting to rosbridge (3600 seconds by default).
+
+        Args:
+            max_delay: The new maximum delay, in seconds.
+        """
+        LOGGER.debug('Updating max delay to {} seconds'.format(max_delay))
+        # See https://twistedmatrix.com/documents/19.10.0/api/twisted.internet.protocol.ReconnectingClientFactory.html
+        cls.maxDelay = max_delay
+
+    @classmethod
+    def set_initial_delay(cls, initial_delay):
+        """Set the initial delay in seconds for reconnecting to rosbridge (1 second by default).
+
+        Args:
+            initial_delay: The new initial delay, in seconds.
+        """
+        LOGGER.debug('Updating initial delay to {} seconds'.format(initial_delay))
+        # See https://twistedmatrix.com/documents/19.10.0/api/twisted.internet.protocol.ReconnectingClientFactory.html
+        cls.initialDelay = initial_delay
+
+    @classmethod
+    def set_max_retries(cls, max_retries):
+        """Set the maximum number or connection retries when the rosbridge connection is lost (no limit by default).
+
+        Args:
+            max_retries: The new maximum number of retries.
+        """
+        LOGGER.debug('Updating max retries to {}'.format(max_retries))
+        # See https://twistedmatrix.com/documents/19.10.0/api/twisted.internet.protocol.ReconnectingClientFactory.html
+        cls.maxRetries = max_retries
+
 
 class TwistedEventLoopManager(object):
     """Manage the main event loop using Twisted reactor.
@@ -135,7 +170,6 @@ class TwistedEventLoopManager(object):
         on a separate thread to avoid blocking."""
 
         if reactor.running:
-            LOGGER.warn('Twisted reactor is already running')
             return
 
         self._thread = threading.Thread(target=reactor.run, args=(False,))
@@ -165,6 +199,61 @@ class TwistedEventLoopManager(object):
             callback (:obj:`callable`): Callable function to be invoked in a thread.
         """
         reactor.callInThread(callback)
+
+    def blocking_call_from_thread(self, callback, timeout):
+        """Call the given function from a thread, and wait for the result synchronously
+        for as long as the timeout will allow.
+
+        Args:
+            callback: Callable function to be invoked from the thread.
+            timeout (:obj: int): Number of seconds to wait for the response before
+                raising an exception.
+
+        Returns:
+            The results from the callback, or a timeout exception.
+        """
+        result_placeholder = defer.Deferred()
+        if timeout:
+            result_placeholder.addTimeout(timeout, reactor, onTimeoutCancel=self.raise_timeout_exception)
+        return threads.blockingCallFromThread(reactor, callback, result_placeholder)
+
+    def raise_timeout_exception(self, _result=None, _timeout=None):
+        """Callback called on timeout.
+
+        Args:
+            _result: Unused--required by Twister.
+            _timeout: Unused--required by Twister.
+
+        Raises:
+            An exception.
+        """
+        raise Exception('No service response received')
+
+    def get_inner_callback(self, result_placeholder):
+        """Get the callback which, when called, provides result_placeholder with the result.
+
+        Args:
+            result_placeholder: (:obj: Deferred): Object in which to store the result.
+
+        Returns:
+            A callable which provides result_placeholder with the result in the case of success.
+        """
+        def inner_callback(result):
+            result_placeholder.callback({'result': result})
+        return inner_callback
+
+    def get_inner_errback(self, result_placeholder):
+        """Get the errback which, when called, provides result_placeholder with the error.
+
+        Args:
+            result_placeholder: (:obj: Deferred): Object in which to store the result.
+
+        Returns:
+            A callable which provides result_placeholder with the error in the case of failure.
+        """
+        def inner_errback(error):
+            result_placeholder.callback({'exception': error})
+        return inner_errback
 
     def terminate(self):
         """Signals the termination of the main event loop."""

@@ -18,11 +18,11 @@ sys.path.insert(0, os.path.abspath('../src'))
 # -- Project information -----------------------------------------------------
 
 project = u'roslibpy-docs-zh'
-copyright = u'2019, Wu Hsin'
-author = u'Wu Hsin'
+copyright = u'2020, Wu Xin'
+author = u'Wu Xin'
 
 # The full version, including alpha/beta/rc tags
-release = '0.6.0'
+release = '1.1.0'
 
 
 # -- General configuration ---------------------------------------------------

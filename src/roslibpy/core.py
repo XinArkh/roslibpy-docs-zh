@@ -2,7 +2,6 @@ from __future__ import print_function
 
 import json
 import logging
-import threading
 
 # Python 2/3 compatibility import list
 try:
@@ -61,11 +60,12 @@ class Topic(object):
         queue_size (:obj:`int`): Queue size created at bridge side for re-publishing webtopics.
         latch (:obj:`bool`): True to latch the topic when publishing, False otherwise.
         queue_length (:obj:`int`): Queue length at bridge side used when subscribing.
+        reconnect_on_close (:obj:`bool`): Reconnect the topic (both for publisher and subscribers) if a reconnection is detected.
     """
     SUPPORTED_COMPRESSION_TYPES = ('png', 'none')
 
     def __init__(self, ros, name, message_type, compression=None, latch=False, throttle_rate=0,
-                 queue_size=100, queue_length=0):
+                 queue_size=100, queue_length=0, reconnect_on_close=True):
         self.ros = ros
         self.name = name
         self.message_type = message_type
@@ -85,8 +85,7 @@ class Topic(object):
             raise ValueError(
                 'Unsupported compression type. Must be one of: ' + str(self.SUPPORTED_COMPRESSION_TYPES))
 
-        # TODO: Implement the following options
-        # self.reconnect_on_close = options.reconnect_on_close || true;
+        self.reconnect_on_close = reconnect_on_close
 
     @property
     def is_advertised(self):
@@ -123,7 +122,7 @@ class Topic(object):
             self.name, self.ros.id_counter)
 
         self.ros.on(self.name, callback)
-        self.ros.send_on_ready(Message({
+        self._connect_topic(Message({
             'op': 'subscribe',
             'id': self._subscribe_id,
             'type': self.message_type,
@@ -137,6 +136,10 @@ class Topic(object):
         """Unregister from a subscribed the topic."""
         if not self._subscribe_id:
             return
+
+        # Do not try to reconnect when manually unsubscribing
+        if self.reconnect_on_close:
+            self.ros.off('close', self._reconnect_topic)
 
         self.ros.off(self.name)
         self.ros.send_on_ready(Message({
@@ -171,7 +174,7 @@ class Topic(object):
         self._advertise_id = 'advertise:%s:%d' % (
             self.name, self.ros.id_counter)
 
-        self.ros.send_on_ready(Message({
+        self._connect_topic(Message({
             'op': 'advertise',
             'id': self._advertise_id,
             'type': self.message_type,
@@ -180,12 +183,33 @@ class Topic(object):
             'queue_size': self.queue_size
         }))
 
-        # TODO: Set _advertise_id=None on disconnect (if not reconnecting)
+        if not self.reconnect_on_close:
+            self.ros.on('close', self._reset_advertise_id)
+
+    def _reset_advertise_id(self, _proto):
+        self._advertise_id = None
+
+    def _connect_topic(self, message):
+        self._connect_message = message
+        self.ros.send_on_ready(message)
+
+        if self.reconnect_on_close:
+            self.ros.on('close', self._reconnect_topic)
+
+    def _reconnect_topic(self, _proto):
+        # Delay a bit the event hookup because
+        #  1) _proto is not yet nullified, and
+        #  2) reconnect anyway takes a few seconds
+        self.ros.call_later(1, lambda: self.ros.send_on_ready(self._connect_message))
 
     def unadvertise(self):
         """Unregister as a publisher for the topic."""
         if not self.is_advertised:
             return
+
+        # Do not try to reconnect when manually unadvertising
+        if self.reconnect_on_close:
+            self.ros.off('close', self._reconnect_topic)
 
         self.ros.send_on_ready(Message({
             'op': 'unadvertise',
@@ -230,10 +254,11 @@ class Service(object):
     def call(self, request, callback=None, errback=None, timeout=None):
         """Start a service call.
 
-        The service can be used either as blocking or non-blocking.
-        If the ``callback`` parameter is ``None``, then the call will
-        block until receiving a response. Otherwise, the service response
-        will be returned in the callback.
+        Note:
+            The service can be used either as blocking or non-blocking.
+            If the ``callback`` parameter is ``None``, then the call will
+            block until receiving a response. Otherwise, the service response
+            will be returned in the callback.
 
         Args:
             request (:class:`.ServiceRequest`): Service request.
@@ -243,7 +268,6 @@ class Service(object):
 
         Returns:
             object: Service response if used as a blocking call, otherwise ``None``.
-
         """
         if self.is_advertised:
             return
@@ -260,26 +284,11 @@ class Service(object):
 
         # Non-blocking mode
         if callback:
-            self.ros.send_service_request(message, callback, errback)
+            self.ros.call_async_service(message, callback, errback)
             return
 
         # Blocking mode
-        wait_event = threading.Event()
-        call_results = {}
-
-        def inner_callback(result):
-            call_results['result'] = result
-            wait_event.set()
-
-        def inner_errback(error):
-            call_results['exception'] = error
-            wait_event.set()
-
-        self.ros.send_service_request(message, inner_callback, inner_errback)
-
-        if not wait_event.wait(timeout):
-            raise Exception('No service response received')
-
+        call_results = self.ros.call_sync_service(message, timeout)
         if 'exception' in call_results:
             raise Exception(call_results['exception'])
 
@@ -353,45 +362,70 @@ class Param(object):
         self.ros = ros
         self.name = name
 
-    def get(self, callback=None, errback=None):
+    def get(self, callback=None, errback=None, timeout=None):
         """Fetch the current value of the parameter.
+
+        Note:
+            This method can be used either as blocking or non-blocking.
+            If the ``callback`` parameter is ``None``, the call will
+            block and return the parameter value. Otherwise, the parameter
+            value will be passed on to the callback.
 
         Args:
             callback: Callable function to be invoked when the operation is completed.
             errback: Callback invoked on error.
+            timeout: Timeout for the operation, in seconds. Only used if blocking.
+
+        Returns:
+            object: Parameter value if used as a blocking call, otherwise ``None``.
         """
         client = Service(self.ros, '/rosapi/get_param', 'rosapi/GetParam')
         request = ServiceRequest({'name': self.name})
 
-        client.call(request, lambda result: callback(
-            json.loads(result['value'])), errback)
+        if not callback:
+            result = client.call(request, timeout=timeout)
+            return json.loads(result['value'])
+        else:
+            client.call(request, lambda result: callback(
+                json.loads(result['value'])), errback)
 
-    def set(self, value, callback=None, errback=None):
+    def set(self, value, callback=None, errback=None, timeout=None):
         """Set a new value to the parameter.
 
+        Note:
+            This method can be used either as blocking or non-blocking.
+            If the ``callback`` parameter is ``None``, the call will
+            block until completion.
+
         Args:
-            value: Value to set the parameter to.
             callback: Callable function to be invoked when the operation is completed.
             errback: Callback invoked on error.
+            timeout: Timeout for the operation, in seconds. Only used if blocking.
         """
         client = Service(self.ros, '/rosapi/set_param', 'rosapi/SetParam')
         request = ServiceRequest(
             {'name': self.name, 'value': json.dumps(value)})
 
-        client.call(request, callback, errback)
+        client.call(request, callback, errback, timeout=timeout)
 
-    def delete(self, callback=None, errback=None):
+    def delete(self, callback=None, errback=None, timeout=None):
         """Delete the parameter.
+
+        Note:
+            This method can be used either as blocking or non-blocking.
+            If the ``callback`` parameter is ``None``, the call will
+            block until completion.
 
         Args:
             callback: Callable function to be invoked when the operation is completed.
             errback: Callback invoked on error.
+            timeout: Timeout for the operation, in seconds. Only used if blocking.
         """
         client = Service(self.ros, '/rosapi/delete_param',
                          'rosapi/DeleteParam')
         request = ServiceRequest({'name': self.name})
 
-        client.call(request, callback, errback)
+        client.call(request, callback, errback, timeout=timeout)
 
 
 if __name__ == '__main__':

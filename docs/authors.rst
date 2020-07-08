@@ -13,4 +13,4 @@
 本文档作者
 ----------
 
-* Wu Hsin `@XinArkh <https://github.com/XinArkh>`_
+* Wu XIn `@XinArkh <https://github.com/XinArkh>`_

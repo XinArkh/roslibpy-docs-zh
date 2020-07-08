@@ -5,9 +5,9 @@ roslibpy 中文文档
 
 :作者: `Gramazio Kohler Research <https://github.com/gramaziokohler>`_
 
-:译者: `Wu Hsin <https://github.com/XinArkh>`_
+:译者: `Wu Xin <https://github.com/XinArkh>`_
 
-:授权: 该文档遵循 `CC BY-SA 4.0 <http://creativecommons.org/licenses/by-sa/4.0/>`_ 许可协议。
+:授权: 该（翻译）文档遵循 `CC BY-SA 4.0 <http://creativecommons.org/licenses/by-sa/4.0/>`_ 许可协议。
 
 .. note::
    
@@ -20,7 +20,7 @@ roslibpy 中文文档
 
 **roslibpy** 的 API 构建参考了 `roslibjs <http://wiki.ros.org/roslibjs>`_ 的结构。
 
-截至 2019 年 6 月 8 日，\ **roslibpy** 的版本更新至 0.6.0，亦为本中文文档所对应版本。
+截至 2020 年 7 月 8 日，\ **roslibpy** 的版本更新至 1.1.0，也是该中文文档所对应的版本。早期版本在  `GitHub 仓库 <https://github.com/XinArkh/roslibpy-docs-zh>`_\ 的分支中有记录，请自行查阅。
 
 
 .. toctree::

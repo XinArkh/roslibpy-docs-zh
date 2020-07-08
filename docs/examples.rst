@@ -74,6 +74,24 @@
     \ ``run()``\ 与\ ``run_forever()``\ 的区别在于，前者新开一个单独的线程来处理事件，而后者会阻塞当前线程。
 
 
+断开连接
+-----------
+
+在你的任务完成后，你应该干净地断开与 ``rosbridge`` 的连接。有两个相关的方法可以实现这个事情：
+
+ - :meth:`roslibpy.Ros.close`: 断开 websocket 连接. 在连接被关闭后，通过调用 :meth:`roslibpy.Ros.connect`: 还可以再次连接。
+ - :meth:`roslibpy.Ros.terminate`: 终止主事件循环。如果连接还是打开着的，那么就会首先关闭它。
+
+ .. note::
+
+  当使用 ``twisted/authbahn`` 循环的时候，终止主事件循环是一个不可逆的行为，因为 ``twisted`` 反应器 (reacters) 不能被重启。这个操作应该保留到你程序的最后面再使用。
+
+重新连接
+------------
+
+如果在开启连接的时候 ``rosbridge`` 不响应，或者一个已建立的连接意外断开的时候， ``roslibpy`` 将会自动尝试重新连接，并且重新连接话题的订阅者和发布者。重新连接尝试时间的间隔是指数递减的。
+
+
 Hello World: 话题（Topics）
 ---------------------------
 
@@ -214,3 +232,75 @@ Action 客户端
 您将立即看到我们的 action 服务器的所有中间计算，并在最后一行显示生成的斐波那契数列。
 
 这个例子非常简单，使用了 :meth:`roslibpy.actionlib.Goal.wait` 函数，以使代码更易于阅读。一个更鲁棒的处理方法是使用回调把结果连接到 ``result`` 事件。
+
+查询 ROS API
+--------------
+
+ROS 提供了一系列 API 用来查询话题、服务、节点等。这些 API 可以用 Python 代码以编程的方式使用，也可以通过命令行调用。
+
+通过命令行使用
+^^^^^^^^^^^^^^^^^
+
+命令行的方式模仿了 ROS 本身的调用过程。
+
+下列的命令都是可用的::
+
+    $ roslibpy topic list
+    $ roslibpy topic type /rosout
+    $ roslibpy topic find std_msgs/Int32
+    $ roslibpy msg info rosgraph_msgs/Log
+
+    $ roslibpy service list
+    $ roslibpy service type /rosout/get_loggers
+    $ roslibpy service find roscpp/GetLoggers
+    $ roslibpy srv info roscpp/GetLoggers
+
+    $ roslibpy param list
+    $ roslibpy param set /foo "[\"1\", 1, 1.0]"
+    $ roslibpy param get /foo
+    $ roslibpy param delete /foo
+
+通过 Python 代码使用
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+与上面的方式相对应，下列方法允许通过 Python 代码来查询 ROS API：
+
+话题
+""""""
+
+* :meth:`roslibpy.Ros.get_topics`
+* :meth:`roslibpy.Ros.get_topic_type`
+* :meth:`roslibpy.Ros.get_topics_for_type`
+* :meth:`roslibpy.Ros.get_message_details`
+
+服务
+""""""
+
+* :meth:`roslibpy.Ros.get_services`
+* :meth:`roslibpy.Ros.get_service_type`
+* :meth:`roslibpy.Ros.get_services_for_type`
+* :meth:`roslibpy.Ros.get_service_request_details`
+* :meth:`roslibpy.Ros.get_service_response_details`
+
+参数
+""""""
+
+* :meth:`roslibpy.Ros.get_params`
+* :meth:`roslibpy.Ros.get_param`
+* :meth:`roslibpy.Ros.set_param`
+* :meth:`roslibpy.Ros.delete_param`
+
+
+进阶例程
+--------------
+
+下列是一些更复杂的使用 ``roslibpy`` 的例子。
+
+我们鼓励大家通过 pull request 或 issue tracker 来提交更多的例程。
+
+.. toctree::
+    :maxdepth: 2
+    :glob:
+
+    examples/*
+
